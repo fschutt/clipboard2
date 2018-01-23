@@ -6,7 +6,7 @@ This is a library for better, simpler clipboard handling than the existing rust-
 
 # Usage 
 
-```
+```rust
 extern crate clipboard2;
 
 use clipboard2::{Clipboard, SystemClipboard};
