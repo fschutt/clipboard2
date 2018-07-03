@@ -4,6 +4,6 @@ use clipboard2::{Clipboard, SystemClipboard};
 
 fn main() {
 	let clipboard = SystemClipboard::new().unwrap();
-	clipboard.set_contents("Hello".as_bytes().to_vec()).unwrap();
-	println!("{}", String::from_utf8(clipboard.get_contents().unwrap()).unwrap());
+	clipboard.set_string_contents(String::from("Hello")).unwrap();
+	println!("{}", clipboard.get_string_contents().unwrap());
 }
