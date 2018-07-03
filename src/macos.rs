@@ -1,5 +1,5 @@
 use Clipboard;
-use errors::ClipboardError;
+use errors::{ClipboardError, MacOsError};
 
 use objc::runtime::{Object, Class};
 use objc_foundation::{
@@ -17,6 +17,15 @@ pub struct MacOsClipboard {
 	pasteboard: Id<Object>,
 }
 
+/*
+pub trait Clipboard {
+	type Output;
+	fn new() -> Result<Self::Output, ClipboardError>;
+	fn get_contents(&self) -> Result<Vec<u8>, ClipboardError>;
+	fn set_contents(&self, contents: Vec<u8>) -> Result<(), ClipboardError>;
+}
+*/
+
 impl Clipboard for MacOsClipboard {
 
 	type Output = Self;
@@ -31,7 +40,7 @@ impl Clipboard for MacOsClipboard {
 		Ok(MacOsClipboard { pasteboard: pasteboard })
 	}
 
-	fn get_contents(&self) -> Result<String, ClipboardError> {
+	fn get_contents(&self) -> Result<Vec<u8>, ClipboardError> {
 		let string_class: Id<NSObject> = {
 		    let cls: Id<Class> = unsafe { Id::from_ptr(class("NSString")) };
 		    unsafe { transmute(cls) }
@@ -49,12 +58,16 @@ impl Clipboard for MacOsClipboard {
 		if string_array.count() == 0 {
 		    Err(MacOsError::ReadObjectsForClassesEmpty.into())
 		} else {
-		    Ok(string_array[0].as_str().to_owned())
+		    Ok(string_array[0].to_vec())
 		}
 	}
 
-	fn set_contents(&self, contents: &String) -> Result<(), ClipboardError> {
-		let string_array = NSArray::from_vec(vec![NSString::from_str(&data)]);
+	fn get_string_contents(&self) -> Result<String, ClipboardError> {
+		
+	}
+
+	fn set_contents(&self, contents: Vec<u8>) -> Result<(), ClipboardError> {
+		let string_array = NSArray::from_slice(&contents);
 		let _: usize = unsafe { msg_send![self.pasteboard, clearContents] };
 		let success: bool = unsafe { msg_send![self.pasteboard, writeObjects:string_array] };
 		if success {

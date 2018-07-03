@@ -1,9 +1,12 @@
+#![allow(dead_code)]
+
 pub enum ClipboardContentType {
 	#[cfg(target_os="linux")]
 	X11ContentType(X11ContentType),
 	#[cfg(target_os="windows")]
 	WinContentType(WinContentType),
-	// TODO: MacOS
+	#[cfg(target_os="macos")]
+	MacContent,
 }
 
 /// See:
@@ -144,11 +147,64 @@ pub enum WinContentType {
 	Wave,
 }
 
+const CF_BITMAP: u32 = 2;
+const CF_DIB: u32 = 8;
+const CF_DIBV5: u32 = 17;
+const CF_DIF: u32 = 5;
+const CF_DSPBITMAP: u32 = 0x0082;
+const CF_DSPENHMETAFILE: u32 = 0x008E;
+const CF_DSPMETAFILEPICT: u32 = 0x0083;
+const CF_DSPTEXT: u32 = 0x0081;
+const CF_ENHMETAFILE: u32 = 14;
+const CF_GDIOBJFIRST: u32 = 0x0300;
+const CF_GDIOBJLAST: u32 = 0x03FF;
+const CF_HDROP: u32 = 15;
+const CF_LOCALE: u32 = 16;
+const CF_METAFILEPICT: u32 = 3;
+const CF_OEMTEXT: u32 = 7;
+const CF_OWNERDISPLAY: u32 = 0x0080;
+const CF_PALETTE: u32 = 9;
+const CF_PENDATA: u32 = 10;
+const CF_PRIVATEFIRST: u32 = 0x0200;
+const CF_PRIVATELAST: u32 = 0x02FF;
+const CF_RIFF: u32 = 11;
+const CF_SYLK: u32 = 4;
+const CF_TEXT: u32 = 1;
+const CF_TIFF: u32 = 6;
+const CF_UNICODETEXT: u32 = 13;
+const CF_WAVE: u32 = 12;
+
 #[cfg(target_os="windows")]
 impl Into<u32> for WinContentType {
 	fn into(self) -> u32 {
-		match *self {
-			_ => { 0 }
+		match self {
+			Bitmap => CF_BITMAP,
+			Custom(a) => a,
+			Dib => CF_DIB,
+			Dib5 => CF_DIB5,
+			Dif => CF_DIF,
+			DspBitmap => CF_DSPBITMAP,
+			DspEnhancedMetaFile => CF_DSPENHMETAFILE,
+			DspMetaFilePict => CF_DSPMETAFILEPICT,
+			DspText => CF_DSPTEXT,
+			EnhancedMetaFile => CF_ENHMETAFILE,
+			GdiObjectFirst => CF_GDIOBJFIRST,
+			GdiObjectLast =>CF_GDIOBJLAST,
+			HDrop => CF_HDROP,
+			Locale => CF_LOCALE,
+			MetaFilePict => CF_METAFILEPICT,
+			OemText => CF_OEMTEXT,
+			OwnerDisplay => CF_OWNERDISPLAY,
+			Palette => CF_PALETTE,
+			PenData => CF_PENDATA,
+			PrivateFirst => CF_PRIVATEFIRST,
+			PrivateLast => CF_PRIVATELAST,
+			Riff => CF_RIFF,
+			Sylk => CF_SYLK,
+			Text => CF_TEXT,
+			Tiff => CF_TIFF,
+			UnicodeText => CF_UNICODETEXT,
+			Wave => CF_WAVE,
 		}
 	}
 }

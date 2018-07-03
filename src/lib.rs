@@ -22,8 +22,10 @@ pub use errors::ClipboardError;
 pub trait Clipboard {
 	type Output;
 	fn new() -> Result<Self::Output, ClipboardError>;
-	fn get_contents(&self) -> Result<Vec<u8>, ClipboardError>;
-	fn set_contents(&self, contents: Vec<u8>) -> Result<(), ClipboardError>;
+	fn get_contents(&self) -> Result<(Vec<u8>, ClipboardContentType), ClipboardError>;
+	fn get_string_contents(&self) -> Result<String, ClipboardError>;
+	fn set_contents(&self, contents: Vec<u8>, format: ClipboardContentType) -> Result<(), ClipboardError>;
+	fn set_string_contents(&self, contents: String) -> Result<(), ClipboardError>;
 }
 
 #[cfg(target_os="windows")]

@@ -1,5 +1,8 @@
 # clipboard2
 
+[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/fschutt/clipboard2)](https://ci.appveyor.com/project/fschutt/clipboard2)
+[![Travis Build Status](https://travis-ci.org/fschutt/clipboard2.svg?branch=master)](https://travis-ci.org/fschutt/clipboard2)
+
 Hard fork of https://github.com/aweinstock314/rust-clipboard
 
 This library has better error handling than the original one,

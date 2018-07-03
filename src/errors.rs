@@ -109,13 +109,6 @@ impl Display for ClipboardError {
     }
 }
 
-#[cfg(target_os="linux")]
-impl From<X11Error> for ClipboardError {
-    fn from(e: X11Error) -> Self {
-        ClipboardError::X11ClipboardError(e)
-    }
-}
-
 impl From<FromUtf8Error> for ClipboardError {
     fn from(e: FromUtf8Error) -> Self {
         ClipboardError::EncodingError(e)
