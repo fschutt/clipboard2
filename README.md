@@ -1,8 +1,9 @@
 # clipboard2
 
-Improved clipboard handling (similar to rust-clipboard)
+Hard fork of https://github.com/aweinstock314/rust-clipboard
 
-This is a library for better, simpler clipboard handling than the existing rust-clipboard crate.
+This library has better error handling than the original one,
+the code is mostly copied. 
 
 # Usage 
 
@@ -17,5 +18,3 @@ fn main() {
 	println!("{}", String::from_utf8(clipboard.get_contents().unwrap()).unwrap());
 }
 ```
-
-Currently only tested on X11, does not work on MacOS.

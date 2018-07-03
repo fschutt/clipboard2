@@ -1,0 +1,33 @@
+environment:
+  global:
+    PROJECT_NAME: clipboard2
+  matrix:
+    - TARGET: i686-pc-windows-gnu
+      CHANNEL: stable
+    - TARGET: i686-pc-windows-msvc
+      CHANNEL: stable
+    - TARGET: x86_64-pc-windows-gnu
+      CHANNEL: stable
+    - TARGET: x86_64-pc-windows-msvc
+      CHANNEL: stable
+
+# Install Rust and Cargo
+# (Based on from https://github.com/rust-lang/libc/blob/master/appveyor.yml)
+install:
+  - appveyor DownloadFile https://win.rustup.rs/ -FileName rustup-init.exe
+  - rustup-init -yv --default-toolchain %channel% --default-host %target%
+  - set PATH=%PATH%;%USERPROFILE%\.cargo\bin;C:\tools\mingw64\bin;C:\MinGW\bin
+  - gcc -v
+  - rustc -vV
+  - cargo -vV
+
+# 'cargo test' takes care of building for us, so disable Appveyor's build stage. This prevents
+# the "directory does not contain a project or solution file" error.
+# source: https://github.com/starkat99/appveyor-rust/blob/master/appveyor.yml#L113
+build: false
+
+# Equivalent to Travis' `script` phase
+# TODO modify this phase as you see fit
+test_script:
+  - cargo build --verbose --examples
+  - cargo test --verbose

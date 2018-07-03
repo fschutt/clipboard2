@@ -16,6 +16,20 @@ pub enum ClipboardError {
     MacOsClipboardError(MacOsError),
 }
 
+#[cfg(target_os="linux")]
+impl From<X11Error> for ClipboardError {
+    fn from(e: X11Error) -> Self {
+        ClipboardError::X11ClipboardError(e)
+    }
+}
+
+#[cfg(target_os="macos")]
+impl From<MacOsError> for ClipboardError {
+    fn from(e: MacOsError) -> Self {
+        ClipboardError::MacOsClipboardError(e)
+    }
+}
+
 #[derive(Debug, Copy, Clone)]
 #[cfg(target_os = "macos")]
 pub enum MacOsError {

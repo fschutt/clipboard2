@@ -38,6 +38,3 @@ pub use x11::X11Clipboard as SystemClipboard;
 pub mod macos;
 #[cfg(target_os="macos")]
 pub use macos::MacOsClipboard as SystemClipboard;
-
-#[cfg(test)]
-mod tests;
