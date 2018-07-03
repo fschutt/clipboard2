@@ -78,11 +78,10 @@ pub enum X11ContentType {
 
 /// See https://msdn.microsoft.com/en-us/library/windows/desktop/ff729168%28v=vs.85%29.aspx
 #[cfg(target_os="windows")]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum WinContentType {
 	///  A handle to a bitmap (HBITMAP)
 	Bitmap,
-	/// Custom content type, used as backup if none of the formats are known
-	Custom(u32),
 	/// A memory object containing a BITMAPINFO structure followed by the bitmap bits.
 	Dib,
 	/// A memory object containing a BITMAPV5HEADER structure followed by
@@ -145,43 +144,57 @@ pub enum WinContentType {
 	UnicodeText,
 	/// Represents audio data in one of the standard wave formats
 	Wave,
+	/// Custom content type, used as backup if none of the formats are known
+	Custom(u32),
 }
 
-const CF_BITMAP: u32 = 2;
-const CF_DIB: u32 = 8;
-const CF_DIBV5: u32 = 17;
-const CF_DIF: u32 = 5;
-const CF_DSPBITMAP: u32 = 0x0082;
-const CF_DSPENHMETAFILE: u32 = 0x008E;
-const CF_DSPMETAFILEPICT: u32 = 0x0083;
-const CF_DSPTEXT: u32 = 0x0081;
-const CF_ENHMETAFILE: u32 = 14;
-const CF_GDIOBJFIRST: u32 = 0x0300;
-const CF_GDIOBJLAST: u32 = 0x03FF;
-const CF_HDROP: u32 = 15;
-const CF_LOCALE: u32 = 16;
-const CF_METAFILEPICT: u32 = 3;
-const CF_OEMTEXT: u32 = 7;
-const CF_OWNERDISPLAY: u32 = 0x0080;
-const CF_PALETTE: u32 = 9;
-const CF_PENDATA: u32 = 10;
-const CF_PRIVATEFIRST: u32 = 0x0200;
-const CF_PRIVATELAST: u32 = 0x02FF;
-const CF_RIFF: u32 = 11;
-const CF_SYLK: u32 = 4;
-const CF_TEXT: u32 = 1;
-const CF_TIFF: u32 = 6;
-const CF_UNICODETEXT: u32 = 13;
-const CF_WAVE: u32 = 12;
+#[cfg(target_os="windows")]
+impl WinContentType {
+	/// Toggles through the clipboard types
+	pub(crate) fn next(&self) -> Option<Self> {
+		use self::WinContentType::*;
+		match self {
+			Bitmap => Some(Dib),
+			Dib => Some(Dib5),
+			Dib5 => Some(Dif),
+			Dif => Some(DspBitmap),
+			DspBitmap => Some(DspEnhancedMetaFile),
+			DspEnhancedMetaFile => Some(DspMetaFilePict),
+			DspMetaFilePict => Some(DspText),
+			DspText => Some(EnhancedMetaFile),
+			EnhancedMetaFile => Some(GdiObjectFirst),
+			GdiObjectFirst => Some(GdiObjectLast),
+			GdiObjectLast => Some(HDrop),
+			HDrop => Some(Locale),
+			Locale => Some(MetaFilePict),
+			MetaFilePict => Some(OemText),
+			OemText => Some(OwnerDisplay),
+			OwnerDisplay => Some(Palette),
+			Palette => Some(PenData),
+			PenData => Some(PrivateFirst),
+			PrivateFirst => Some(PrivateLast),
+			PrivateLast => Some(Riff),
+			Riff => Some(Sylk),
+			Sylk => Some(Text),
+			Text => Some(Tiff),
+			Tiff => Some(UnicodeText),
+			UnicodeText => Some(Wave),
+			Wave => Some(Custom((*self).into())),
+			Custom(_) => None,
+		}
+	}
+}
 
 #[cfg(target_os="windows")]
 impl Into<u32> for WinContentType {
 	fn into(self) -> u32 {
+		use self::WinContentType::*;
+		use clipboard_win::formats::*;
 		match self {
 			Bitmap => CF_BITMAP,
 			Custom(a) => a,
 			Dib => CF_DIB,
-			Dib5 => CF_DIB5,
+			Dib5 => CF_DIBV5,
 			Dif => CF_DIF,
 			DspBitmap => CF_DSPBITMAP,
 			DspEnhancedMetaFile => CF_DSPENHMETAFILE,

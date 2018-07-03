@@ -1,5 +1,5 @@
 //! Improved cross-platform clipboard library
-//! 
+//!
 //! Fork of https://github.com/aweinstock314/rust-clipboard with better error handling
 
 #[cfg(target_os="windows")]
@@ -18,6 +18,7 @@ mod errors;
 mod clipboard_metadata;
 
 pub use errors::ClipboardError;
+pub use clipboard_metadata::ClipboardContentType;
 
 pub trait Clipboard {
 	type Output;
