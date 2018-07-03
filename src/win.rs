@@ -1,3 +1,6 @@
+use Clipboard;
+use errors::ClipboardError;
+
 use clipboard_win::{get_clipboard_string, set_clipboard_string};
 
 use clipboard_win::Clipboard as SystemClipboard;

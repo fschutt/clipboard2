@@ -1,4 +1,6 @@
 use Clipboard;
+use errors::ClipboardError;
+
 use objc::runtime::{Object, Class};
 use objc_foundation::{
 	INSArray, INSString, INSObject,
