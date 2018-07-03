@@ -9,7 +9,7 @@ pub enum ClipboardContentType {
 	MacContent,
 }
 
-/// See:
+/// See: https://tronche.com/gui/x/icccm/sec-2.html#s-2
 #[cfg(target_os="linux")]
 pub enum X11ContentType {
 	AdobePortableDocumentFormat,

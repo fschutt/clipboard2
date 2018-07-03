@@ -100,13 +100,7 @@ impl Error for MacOsError {
     }
 
     fn cause(&self) -> Option<&Error> {
-        match *self {
-            PasteWriteObjectsError => "NSPasteboard @ writeObjects: returned false",
-            ReadObjectsForClassesEmpty => "pasteboard @ readObjectsForClasses: returned empty",
-            ReadObjectsForClassesNull => "pasteboard @ readObjectsForClasses: returned null",
-            PasteboardNotFound => "NSPasteboard: class not found",
-            NullPasteboard => "NSPasteboard @ generalPasteboard: returned null",
-        }
+        None
     }
 }
 

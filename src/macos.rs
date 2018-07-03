@@ -1,7 +1,7 @@
 use {
 	Clipboard,
 	errors::{ClipboardError, MacOsError},
-	clipbard_metadata::ClipboardContentType,
+	clipboard_metadata::ClipboardContentType,
 };
 
 use objc::runtime::{Object, Class};
@@ -20,15 +20,6 @@ pub struct MacOsClipboard {
 	pasteboard: Id<Object>,
 }
 
-/*
-pub trait Clipboard {
-	type Output;
-	fn new() -> Result<Self::Output, ClipboardError>;
-	fn get_contents(&self) -> Result<Vec<u8>, ClipboardError>;
-	fn set_contents(&self, contents: Vec<u8>) -> Result<(), ClipboardError>;
-}
-*/
-
 impl Clipboard for MacOsClipboard {
 
 	type Output = Self;
@@ -39,7 +30,7 @@ impl Clipboard for MacOsClipboard {
 		let cls = Class::get("NSPasteboard").ok_or(MacOsError::PasteboardNotFound)?;
 		let pasteboard: *mut Object = unsafe { msg_send![cls, generalPasteboard] };
 		if pasteboard.is_null() {
-		    return Err(MacOsClipboard::NullPasteboard.into());
+		    return Err(MacOsError::NullPasteboard.into());
 		}
 		let pasteboard: Id<Object> = unsafe { Id::from_ptr(pasteboard) };
 		Ok(MacOsClipboard { pasteboard: pasteboard })
@@ -56,8 +47,8 @@ impl Clipboard for MacOsClipboard {
 		let classes: Id<NSArray<NSObject, Owned>> = NSArray::from_vec(vec![string_class]);
 		let options: Id<NSDictionary<NSObject, NSObject>> = NSDictionary::new();
 
-		let string_array: Id<NSArray<NSString>> = unsafe {
-		    let obj: *mut _ = msg_send![self.pasteboard, readObjectsForClasses:&*classes options:&*options];
+		let string_array: Id<NSArray<u8>> = unsafe {
+		    let obj: *mut const libc::c_char = msg_send![self.pasteboard, readObjectsForClasses:&*classes options:&*options];
 		    if obj.is_null() {
 		        return Err(MacOsError::ReadObjectsForClassesNull.into());
 		    }
@@ -67,7 +58,7 @@ impl Clipboard for MacOsClipboard {
 		if string_array.count() == 0 {
 		    Err(MacOsError::ReadObjectsForClassesEmpty.into())
 		} else {
-		    Ok((string_array[0].to_vec(), ClipboardContentType::MacContent))
+		    Ok((string_array.to_vec(), ClipboardContentType::MacContent))
 		}
 	}
 
@@ -101,7 +92,7 @@ impl Clipboard for MacOsClipboard {
 	fn set_contents(&self, contents: Vec<u8>, _: ClipboardContentType)
 	-> Result<(), ClipboardError>
 	{
-		let string_array = NSArray::from_slice(&contents);
+		let string_array = NSArray::from_slice(&contents[..]);
 		let _: usize = unsafe { msg_send![self.pasteboard, clearContents] };
 		let success: bool = unsafe { msg_send![self.pasteboard, writeObjects:string_array] };
 		if success {
