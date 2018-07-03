@@ -89,14 +89,15 @@ pub enum MacOsError {
 #[cfg(target_os = "macos")]
 impl Display for MacOsError {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        use self::ClipboardError::*;
-        write!(f, match *self {
+        use self::MacOsError::*;
+        let msg = match *self {
             PasteWriteObjectsError => "Could not paste objects to clipboard",
             ReadObjectsForClassesEmpty => "Clipboard is empty",
             ReadObjectsForClassesNull => "No objects to read",
             PasteboardNotFound => "Pasteboard not found",
             NullPasteboard => "General pasteboard not found",
-        })
+        };
+        write!(f, "{}", msg)
     }
 }
 
@@ -110,7 +111,7 @@ impl Display for ClipboardError {
             #[cfg(target_os="linux")]
             X11ClipboardError(ref e) => write!(f, "X11ClipboardError: {}", e),
             #[cfg(target_os="macos")]
-            MacOsClipboardError(ref e) => write!(f, "MacOsClipboardError: {} cause: {:?}", e.description(), e.cause()),
+            MacOsClipboardError(ref e) => write!(f, "MacOsClipboardError: {}", e),
             #[cfg(target_os="windows")]
             WindowsClipboardError(ref e) => write!(f, "WindowsClipboardError: {} cause: {:?}", e.description(), e.cause()),
         }

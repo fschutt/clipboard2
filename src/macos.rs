@@ -54,7 +54,7 @@ impl Clipboard for MacOsClipboard {
 		let options: Id<NSDictionary<NSObject, NSObject>> = NSDictionary::new();
 
 		let string_array: Id<NSArray<NSString>> = unsafe {
-		    let obj: *mut _ =
+		    let obj: *mut NSArray<NSString> =
 		        msg_send![self.pasteboard, readObjectsForClasses:&*classes options:&*options];
 		    if obj.is_null() {
 		        return Err(MacOsError::ReadObjectsForClassesNull.into());
