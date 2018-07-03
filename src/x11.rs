@@ -1,5 +1,8 @@
-use Clipboard;
-use errors::ClipboardError;
+use {
+	Clipboard,
+	errors::ClipboardError,
+	clipboard_metadata::ClipboardContentType,
+};
 use x11_clipboard::Clipboard as SystemClipboard;
 use std::time::Duration;
 
@@ -8,28 +11,48 @@ pub struct X11Clipboard {
 }
 
 impl Clipboard for X11Clipboard {
+
 	type Output = Self;
 
-	fn new() -> Result<Self::Output, ClipboardError> {
+	fn new() 
+	-> Result<Self::Output, ClipboardError> 
+	{
 		Ok(X11Clipboard {
 			inner: SystemClipboard::new()?
 		})
 	}
 
-	fn get_contents(&self) -> Result<Vec<u8>, ClipboardError> {
-		Ok(self.inner.load(
-            self.inner.getter.atoms.clipboard, // TODO: .primary
-            self.inner.getter.atoms.utf8_string,
-            self.inner.getter.atoms.property,
-            Duration::from_secs(3),
-        )?)
+	/// # **WARNING**: Unimplemented, use `get_string_contents`
+	fn get_contents(&self)
+	-> Result<(Vec<u8>, ClipboardContentType), ClipboardError> 
+	{
+		Err(ClipboardError::Unimplemented)
 	}
 
-	fn set_contents(&self, contents: Vec<u8>) -> Result<(), ClipboardError> {
+	fn get_string_contents(&self) -> Result<String, ClipboardError> 
+	{
+		Ok(String::from_utf8(self.inner.load(
+		    self.inner.getter.atoms.primary,
+		    self.inner.getter.atoms.utf8_string,
+		    self.inner.getter.atoms.property,
+		    Duration::from_secs(3),
+		)?)?)
+	}
+
+	/// # **WARNING**: Unimplemented, use `set_string_contents`
+	fn set_contents(&self, _contents: Vec<u8>, _: ClipboardContentType) 
+	-> Result<(), ClipboardError>
+	{
+		Err(ClipboardError::Unimplemented)
+	}
+
+	fn set_string_contents(&self, contents: String) 
+	-> Result<(), ClipboardError> 
+	{
 		Ok(self.inner.store(
-		    self.inner.setter.atoms.clipboard, // TODO: .primary ?
+		    self.inner.getter.atoms.primary,
 		    self.inner.setter.atoms.utf8_string,
-		    contents,
+		    &*contents,
 		)?)
 	}
 }

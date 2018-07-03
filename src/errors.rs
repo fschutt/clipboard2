@@ -76,7 +76,7 @@ impl From<MacOsError> for ClipboardError {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg(target_os = "macos")]
 pub enum MacOsError {
     PasteWriteObjectsError,
@@ -87,71 +87,33 @@ pub enum MacOsError {
 }
 
 #[cfg(target_os = "macos")]
-impl Error for MacOsError {
-    fn description(&self) -> &str {
-        use self::MacOsError::*;
-        match *self {
+impl Display for MacOsError {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        use self::ClipboardError::*;
+        write!(f, match *self {
             PasteWriteObjectsError => "Could not paste objects to clipboard",
             ReadObjectsForClassesEmpty => "Clipboard is empty",
             ReadObjectsForClassesNull => "No objects to read",
             PasteboardNotFound => "Pasteboard not found",
             NullPasteboard => "General pasteboard not found",
-        }
-    }
-
-    fn cause(&self) -> Option<&Error> {
-        None
-    }
-}
-
-#[cfg(target_os = "macos")]
-impl Display for MacOsError {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "{}", self.description())
-    }
-}
-
-impl Error for ClipboardError {
-    fn description(&self) -> &str {
-        use self::ClipboardError::*;
-        match *self {
-            Unimplemented => "Attempting to set the contents of the clipboard, \
-                              which hasn't yet been implemented on this platform.",
-            IoError(ref e) => e.description(),
-            EncodingError(ref e) => e.description(),
-            #[cfg(target_os="linux")]
-            X11ClipboardError(ref e) => e.description(),
-            #[cfg(target_os="macos")]
-            MacOsClipboardError(ref e) => e.description(),
-            #[cfg(target_os="windows")]
-            WindowsClipboardError(ref e) => e.description(),
-        }
-    }
-
-    fn cause(&self) -> Option<&Error> {
-        use self::ClipboardError::*;
-        match *self {
-            Unimplemented => None,
-            EncodingError(ref e) => e.cause(),
-            IoError(ref e) => e.cause(),
-            #[cfg(target_os="linux")]
-            X11ClipboardError(ref e) => e.cause(),
-            #[cfg(target_os="macos")]
-            MacOsClipboardError(ref e) => e.cause(),
-            #[cfg(target_os="windows")]
-            WindowsClipboardError(ref e) => e.cause(),
-        }
+        })
     }
 }
 
 impl Display for ClipboardError {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        let cause_str = if let Some(cause) = self.cause() {
-            format!("cause: {}", cause)
-        } else {
-            String::new()
-        };
-        write!(f, "Clipboard Error: {}\r\n{}", self.description(), cause_str)
+        use self::ClipboardError::*;
+        match self {
+            Unimplemented => write!(f, "Clipboard::Unimplemented: Attempted to get or set the clipboard, which hasn't been implemented yet."),
+            IoError(ref e) => write!(f, "Clipboard::IoError: {} cause: {:?}", e.description(), e.cause()),
+            EncodingError(ref e) => write!(f, "Clipboard::EncodingError: {} cause: {:?}", e.description(), e.cause()),
+            #[cfg(target_os="linux")]
+            X11ClipboardError(ref e) => write!(f, "X11ClipboardError: {}", e),
+            #[cfg(target_os="macos")]
+            MacOsClipboardError(ref e) => write!(f, "MacOsClipboardError: {} cause: {:?}", e.description(), e.cause()),
+            #[cfg(target_os="windows")]
+            WindowsClipboardError(ref e) => write!(f, "WindowsClipboardError: {} cause: {:?}", e.description(), e.cause()),
+        }
     }
 }
 
