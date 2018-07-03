@@ -1,4 +1,6 @@
 //! Improved cross-platform clipboard library
+//! 
+//! Fork of https://github.com/aweinstock314/rust-clipboard with better error handling
 
 #[cfg(target_os="windows")]
 extern crate clipboard_win;
