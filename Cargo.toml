@@ -2,10 +2,11 @@
 name = "clipboard2"
 version = "0.1.0"
 authors = ["Avi Weinstock <aweinstock314@gmail.com>", "Felix Schütt <felix.schuett@maps4print.com>"]
-description = "clipboard2 is an improved version of clipboard with better error handling."
+description = "clipboard2 is an improved version of clipboard-rs with better error handling and MIME type handling on Windows"
 repository = "https://github.com/fschutt/clipboard2"
 license = "MIT"
 keywords = ["clipboard"]
+readme = "README.md"
 
 [target.'cfg(windows)'.dependencies]
 clipboard-win = "2.0.0"
