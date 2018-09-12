@@ -15,7 +15,7 @@ extern crate objc_id;
 extern crate objc_foundation;
 
 mod errors;
-mod clipboard_metadata;
+pub mod clipboard_metadata;
 
 pub use errors::ClipboardError;
 pub use clipboard_metadata::ClipboardContentType;
