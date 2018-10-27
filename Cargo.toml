@@ -1,6 +1,6 @@
 [package]
 name = "clipboard2"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Avi Weinstock <aweinstock314@gmail.com>", "Felix Schütt <felix.schuett@maps4print.com>"]
 description = "clipboard2 is an improved version of clipboard-rs with better error handling and MIME type handling on Windows"
 repository = "https://github.com/fschutt/clipboard2"
