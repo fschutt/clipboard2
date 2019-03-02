@@ -1,6 +1,6 @@
 use std::fmt::{self, Display, Formatter};
 
-#[cfg(target_os="linux")]
+#[cfg(any(target_os="linux", target_os="openbsd"))]
 use x11_clipboard::error::Error as X11Error;
 
 use std::string::FromUtf8Error;
@@ -12,7 +12,7 @@ pub enum ClipboardError {
     Unimplemented,
     IoError(IoError),
     EncodingError(FromUtf8Error),
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os="openbsd"))]
     X11ClipboardError(X11Error),
     #[cfg(target_os = "macos")]
     MacOsClipboardError(MacOsError),
@@ -62,7 +62,7 @@ impl From<WinError> for ClipboardError {
     }
 }
 
-#[cfg(target_os="linux")]
+#[cfg(any(target_os="linux", target_os="openbsd"))]
 impl From<X11Error> for ClipboardError {
     fn from(e: X11Error) -> Self {
         ClipboardError::X11ClipboardError(e)
@@ -108,7 +108,7 @@ impl Display for ClipboardError {
             Unimplemented => write!(f, "Clipboard::Unimplemented: Attempted to get or set the clipboard, which hasn't been implemented yet."),
             IoError(ref e) => write!(f, "Clipboard::IoError: {} cause: {:?}", e.description(), e.cause()),
             EncodingError(ref e) => write!(f, "Clipboard::EncodingError: {} cause: {:?}", e.description(), e.cause()),
-            #[cfg(target_os="linux")]
+            #[cfg(any(target_os="linux", target_os="openbsd"))]
             X11ClipboardError(ref e) => write!(f, "X11ClipboardError: {}", e),
             #[cfg(target_os="macos")]
             MacOsClipboardError(ref e) => write!(f, "MacOsClipboardError: {}", e),

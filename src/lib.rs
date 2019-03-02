@@ -4,7 +4,7 @@
 
 #[cfg(target_os="windows")]
 extern crate clipboard_win;
-#[cfg(target_os="linux")]
+#[cfg(any(target_os="linux", target_os="openbsd"))]
 extern crate x11_clipboard;
 #[cfg(target_os="macos")]
 #[macro_use]
@@ -34,9 +34,9 @@ pub mod win;
 #[cfg(target_os="windows")]
 pub use win::WindowsClipboard as SystemClipboard;
 
-#[cfg(target_os="linux")]
+#[cfg(any(target_os="linux", target_os="openbsd"))]
 pub mod x11;
-#[cfg(target_os="linux")]
+#[cfg(any(target_os="linux", target_os="openbsd"))]
 pub use x11::X11Clipboard as SystemClipboard;
 
 #[cfg(target_os="macos")]

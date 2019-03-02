@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 pub enum ClipboardContentType {
-	#[cfg(target_os="linux")]
+	#[cfg(any(target_os="linux", target_os="openbsd"))]
 	X11ContentType(X11ContentType),
 	#[cfg(target_os="windows")]
 	WinContentType(WinContentType),
@@ -10,7 +10,7 @@ pub enum ClipboardContentType {
 }
 
 /// See: https://tronche.com/gui/x/icccm/sec-2.html#s-2
-#[cfg(target_os="linux")]
+#[cfg(any(target_os="linux", target_os="openbsd"))]
 pub enum X11ContentType {
 	AdobePortableDocumentFormat,
 	ApplePict,
