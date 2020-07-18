@@ -30,6 +30,7 @@ pub enum WinError {
 #[cfg(target_os = "windows")]
 impl Display for WinError {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        use self::WinError::*;
         write!(
             f,
             "{}",
