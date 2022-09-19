@@ -2,6 +2,7 @@
 name = "clipboard2"
 version = "0.1.1"
 authors = ["Avi Weinstock <aweinstock314@gmail.com>", "Felix Schütt <felix.schuett@maps4print.com>"]
+edition = "2021"
 description = "clipboard2 is an improved version of clipboard-rs with better error handling and MIME type handling on Windows"
 repository = "https://github.com/fschutt/clipboard2"
 license = "MIT"
@@ -9,7 +10,7 @@ keywords = ["clipboard"]
 readme = "README.md"
 
 [target.'cfg(windows)'.dependencies]
-clipboard-win = "2.0.0"
+clipboard-win = "4.4"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2"
@@ -17,4 +18,4 @@ objc_id = "0.1"
 objc-foundation = "0.1"
 
 [target.'cfg(any(target_os = "linux", target_os = "openbsd"))'.dependencies]
-x11-clipboard = "0.3.0-alpha.1"
+x11-clipboard = "0.7"
