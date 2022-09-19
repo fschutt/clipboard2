@@ -30,7 +30,7 @@ pub enum WinError {
 #[cfg(target_os = "windows")]
 impl Display for WinError {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "{}", self.description())
+        write!(f, "{self}")
     }
 }
 
@@ -44,13 +44,20 @@ impl Error for WinError {
         }
     }
 
-    fn cause(&self) -> Option<&Error> {
+    fn cause(&self) -> Option<&dyn Error> {
         None
     }
 }
 
 impl From<IoError> for ClipboardError {
     fn from(e: IoError) -> Self {
+        ClipboardError::IoError(e)
+    }
+}
+
+#[cfg(target_os = "windows")]
+impl From<clipboard_win::SystemError> for ClipboardError {
+    fn from(e: clipboard_win::SystemError) -> Self {
         ClipboardError::IoError(e)
     }
 }
@@ -109,11 +116,11 @@ impl Display for ClipboardError {
             IoError(ref e) => write!(f, "Clipboard::IoError: {e} cause: {:?}", e.source()),
             EncodingError(ref e) => write!(f, "Clipboard::EncodingError: {e} cause: {:?}",  e.source()),
             #[cfg(any(target_os="linux", target_os="openbsd"))]
-            X11ClipboardError(ref e) => write!(f, "X11ClipboardError: {}", e),
+            X11ClipboardError(ref e) => write!(f, "X11ClipboardError: {e}"),
             #[cfg(target_os="macos")]
-            MacOsClipboardError(ref e) => write!(f, "MacOsClipboardError: {}", e),
+            MacOsClipboardError(ref e) => write!(f, "MacOsClipboardError: {e}"),
             #[cfg(target_os="windows")]
-            WindowsClipboardError(ref e) => write!(f, "WindowsClipboardError: {} cause: {:?}", e.description(), e.cause()),
+            WindowsClipboardError(ref e) => write!(f, "WindowsClipboardError: {e} cause: {:?}", e.source()),
         }
     }
 }
